@@ -1,5 +1,6 @@
-from ModelBase import ModelBase
 import pickle
+
+from src.ModelBase import ModelBase
 
 
 class SklearnModel(ModelBase):

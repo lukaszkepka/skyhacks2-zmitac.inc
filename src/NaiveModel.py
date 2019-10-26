@@ -1,9 +1,9 @@
 from builtins import range
 
-from ModelBase import ModelBase
 from random import choices
 import pandas as pd
-import pickle
+
+from src.ModelBase import ModelBase
 
 
 class NaiveModel(ModelBase):
@@ -37,13 +37,13 @@ class NaiveModel(ModelBase):
         return hist
 
     def predict_for_column(self, column):
-        an = v.compute_distribution_for_column(column)
-        population = list(an.keys())
-        weights = list(an.values())
+        hist = self.compute_distribution_for_column(column)
+        population = list(hist.keys())
+        weights = list(hist.values())
         return choices(population, weights)
 
     def predict(self, X=None):
-        return (self.predict_for_column('tech_cond'), self.predict_for_column('standard'))
+        return (self.predict_for_column('tech_cond')[0], self.predict_for_column('standard')[0])
 
     def predict_proba(self, X):
         return None

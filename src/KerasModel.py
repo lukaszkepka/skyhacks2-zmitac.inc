@@ -1,6 +1,7 @@
-from ModelBase import ModelBase
 from keras.models import load_model as keras_load_model
 import numpy as np
+
+from src.ModelBase import ModelBase
 
 
 class KerasModel(ModelBase):
