@@ -8,8 +8,8 @@ class ModelBase(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def load_model(self, model_name):
-        ...
+        pass
 
     @abc.abstractmethod
     def predict(self, X):
-        ...
+        pass

@@ -9,6 +9,7 @@ import numpy as np
 import utils
 from KerasModel import KerasModel
 from ModelBase import ModelBase
+from NaiveModel import NaiveModel
 from SklearnModel import SklearnModel
 
 __author__ = 'ING_DS_TECH'
@@ -21,6 +22,7 @@ logger = logging.getLogger(__name__)
 input_dir = "Images"
 models_dir = "Models"
 answers_file = "answers.csv"
+annotations_file = "labels.csv"
 
 img_shape = (224, 224)
 
@@ -46,8 +48,7 @@ output = []
 
 models = {'task_1': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
           'task_2': SklearnModel(os.path.join(models_dir, 'trained_knn.sav')),
-          'task_3': None  # KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
-          }
+          'task_3': NaiveModel(os.path.join(models_dir, annotations_file))}
 
 
 def task_1(file_path: str, model: ModelBase) -> dict:
@@ -75,13 +76,9 @@ def task_2(output_per_file: dict, file_path: str, model: ModelBase):
 
 def task_3(file_path: str, model: ModelBase) -> Tuple[str, str]:
     logger.debug("Performing task 3 for file {0}".format(file_path))
-    #
-    #
-    #	HERE SHOULD BE A REAL SOLUTION
-    #
-    #
+    result = model.predict()
     logger.debug("Done with Task 1 for file {0}".format(file_path))
-    return labels_task3_1[random.randrange(len(labels_task3_1))], labels_task3_2[random.randrange(len(labels_task3_2))]
+    return result
 
 
 def main():
