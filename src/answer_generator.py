@@ -19,10 +19,11 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-input_dir = "Images"
-models_dir = "D:\\Programowanie\\zmitac.inc\\Models"
-answers_file = "answers.csv"
-annotations_file = "labels.csv"
+
+input_dir = "../Images"
+models_dir = "../Models"
+answers_file = "../answers.csv"
+annotations_file = "../labels.csv"
 
 img_shape = (224, 224)
 
@@ -36,6 +37,8 @@ labels_all_in_order = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub
                        'Wall', 'Window']
 
 rooms_labels = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
+rooms_labels_task_2 = ['bathroom', 'bedroom', 'dinning_room', 'house', 'kitchen', 'living_room']
+
 
 filtered_labels = [label for label in labels_all_in_order if label not in rooms_labels]
 
@@ -66,7 +69,7 @@ def task_2(output_per_file: dict, file_path: str, model: ModelBase):
     output_per_file.update(utils.predict_rooms_labels(y_pred_proba, rooms_labels))
     y_pred = model.predict(X)[0]
     output_per_file = dict((k, int(v)) for k, v in output_per_file.items())
-    output_per_file['task2_class'] = rooms_labels[y_pred]
+    output_per_file['task2_class'] = rooms_labels_task_2[y_pred]
 
     logger.debug("Done with Task 2 for file {0}".format(file_path))
     return output_per_file
