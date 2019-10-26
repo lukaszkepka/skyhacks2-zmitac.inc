@@ -31,7 +31,9 @@ labels_all_in_order = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub
                        'Shower', 'Sink', 'Sky', 'Table', 'Tablecloth', 'Tap', 'Tile', 'Toilet', 'Tree', 'Urban area',
                        'Wall', 'Window']
 
-rooms_labels_to_skip = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
+rooms_labels = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
+
+filtered_labels = [label for label in labels_all_in_order if label not in rooms_labels]
 
 labels_task2 = ['apartment', 'bathroom', 'bedroom', 'dinning_room', 'house', 'kitchen', 'living_room']
 
@@ -41,31 +43,29 @@ labels_task3_2 = [1, 2, 3, 4]
 output = []
 
 models = {'task_1': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
-          'task_2': None, # SklearnModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
+          'task_2': SklearnModel(os.path.join(models_dir, 'trained_knn.sav')),
           'task_3': None # KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
           }
 
 
-def task_1(partial_output: dict, file_path: str, model: ModelBase) -> dict:
+def task_1(file_path: str, model: ModelBase) -> dict:
     logger.debug("Performing task 1 for file {0}".format(file_path))
 
-    task_1_labels = [label for label in labels_all_in_order if label not in rooms_labels_to_skip]
-    labels_values_pred = model.predict(utils.load_input_img(file_path, img_shape))
-    partial_output.update(utils.merge_labels_and_vals_to_dict(task_1_labels, labels_values_pred))
+    labels_values_pred = model.predict(utils.load_input_img(file_path, img_shape))[0]
 
     logger.debug("Done with Task 1 for file {0}".format(file_path))
-    return partial_output
+    return utils.merge_labels_and_vals_to_dict(filtered_labels, labels_values_pred)
 
 
-def task_2(file_path: str, model: ModelBase) -> str:
+def task_2(output_per_file: dict, file_path: str, model: ModelBase) -> str:
     logger.debug("Performing task 2 for file {0}".format(file_path))
-    #
-    #
-    #	HERE SHOULD BE A REAL SOLUTION
-    #
-    #
+    X = [output_per_file[label] for label in filtered_labels]
+    y_pred_proba = model.predict_proba(X)
+    output = utils.predict_rooms_labels(y_pred_proba, rooms_labels)
+    y_pred = model.predict(X)
+
     logger.debug("Done with Task 1 for file {0}".format(file_path))
-    return labels_task2[random.randrange(len(labels_task2))]
+    return rooms_labels[y_pred]
 
 
 def task_3(file_path: str, model: ModelBase) -> Tuple[str, str]:
@@ -85,13 +85,11 @@ def main():
         for f in fnames:
             if f.endswith(".jpg"):
                 file_path = os.path.join(dirpath, f)
-                output_per_file = {'filename': f,
-                                   'task2_class': task_2(file_path, models['task_2']),
-                                   'tech_cond': task_3(file_path, models['task_3'])[0],
-                                   'standard': task_3(file_path, models['task_3'])[1]
-                                   }
-                output_per_file = task_1(output_per_file, file_path, models['task_1'])
-
+                output_per_file = task_1(file_path, models['task_1'])
+                output_per_file['task2_class'] = task_2(output_per_file, models['task_2']),
+                output_per_file['tech_cond'] = task_3(file_path, models['task_3'])[0],
+                output_per_file['standard'] = task_3(file_path, models['task_3'])[1]
+                output_per_file['filename'] = f
                 output.append(output_per_file)
 
     with open(answers_file, 'w', newline='') as csvfile:
