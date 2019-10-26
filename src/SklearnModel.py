@@ -8,7 +8,8 @@ class SklearnModel(ModelBase):
         super().__init__(file_name)
 
     def load_model(self, model_name):
-        return pickle.load(model_name)
+        with open(model_name, 'rb') as f:
+            return pickle.load(f)
 
     def predict(self, X):
         return self.model.predict(X)
