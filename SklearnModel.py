@@ -7,4 +7,4 @@ class SklearnModel(ModelBase):
         super().__init__(file_name)
 
     def load_model(self, model_name):
-        return
+        ...

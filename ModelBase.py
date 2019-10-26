@@ -10,5 +10,6 @@ class ModelBase(metaclass=abc.ABCMeta):
     def load_model(self, model_name):
         ...
 
+    @abc.abstractmethod
     def predict(self, X):
-        return self.model.p
+        ...

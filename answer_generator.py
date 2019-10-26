@@ -4,6 +4,7 @@ import logging
 import random
 from typing import Tuple
 
+import utils
 from KerasModel import KerasModel
 from ModelBase import ModelBase
 from SklearnModel import SklearnModel
@@ -15,9 +16,11 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-input_dir = "main_task_data"
-answers_file = "answers.csv"
+input_dir = "Images"
 models_dir = "Models"
+answers_file = "answers.csv"
+
+img_shape = (224, 224)
 
 labels_all_in_order = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
                        'Bed sheet', 'Bedroom', 'Cabinetry', 'Ceiling', 'Chair', 'Chandelier', 'Chest of drawers',
@@ -28,7 +31,7 @@ labels_all_in_order = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub
                        'Shower', 'Sink', 'Sky', 'Table', 'Tablecloth', 'Tap', 'Tile', 'Toilet', 'Tree', 'Urban area',
                        'Wall', 'Window']
 
-labels_to_skip = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
+rooms_labels_to_skip = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
 
 labels_task2 = ['apartment', 'bathroom', 'bedroom', 'dinning_room', 'house', 'kitchen', 'living_room']
 
@@ -38,17 +41,17 @@ labels_task3_2 = [1, 2, 3, 4]
 output = []
 
 models = {'task_1': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
-          'task_2': SklearnModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
-          'task_3': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
+          'task_2': None, # SklearnModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
+          'task_3': None # KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
           }
 
 
 def task_1(partial_output: dict, file_path: str, model: ModelBase) -> dict:
     logger.debug("Performing task 1 for file {0}".format(file_path))
 
-    for label in labels_all_in_order:
-        if label not in labels_to_skip:
-            partial_output[label] = 0
+    task_1_labels = [label for label in labels_all_in_order if label not in rooms_labels_to_skip]
+    labels_values_pred = model.predict(utils.load_input_img(file_path, img_shape))
+    partial_output.update(utils.merge_labels_and_vals_to_dict(task_1_labels, labels_values_pred))
 
     logger.debug("Done with Task 1 for file {0}".format(file_path))
     return partial_output
