@@ -1,8 +1,10 @@
 import csv
-import os
 import logging
+import os
 import random
 from typing import Tuple
+
+import numpy as np
 
 import utils
 from KerasModel import KerasModel
@@ -35,8 +37,6 @@ rooms_labels = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Livin
 
 filtered_labels = [label for label in labels_all_in_order if label not in rooms_labels]
 
-labels_task2 = ['apartment', 'bathroom', 'bedroom', 'dinning_room', 'house', 'kitchen', 'living_room']
-
 labels_task3_1 = [1, 2, 3, 4]
 labels_task3_2 = [1, 2, 3, 4]
 
@@ -44,7 +44,7 @@ output = []
 
 models = {'task_1': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
           'task_2': SklearnModel(os.path.join(models_dir, 'trained_knn.sav')),
-          'task_3': None # KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
+          'task_3': None  # KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
           }
 
 
@@ -57,15 +57,18 @@ def task_1(file_path: str, model: ModelBase) -> dict:
     return utils.merge_labels_and_vals_to_dict(filtered_labels, labels_values_pred)
 
 
-def task_2(output_per_file: dict, file_path: str, model: ModelBase) -> str:
+def task_2(output_per_file: dict, file_path: str, model: ModelBase):
     logger.debug("Performing task 2 for file {0}".format(file_path))
     X = [output_per_file[label] for label in filtered_labels]
-    y_pred_proba = model.predict_proba(X)
-    output = utils.predict_rooms_labels(y_pred_proba, rooms_labels)
-    y_pred = model.predict(X)
+    X = np.expand_dims(X, axis=0)
+    y_pred_proba = model.predict_proba(X)[0]
+    output_per_file.update(utils.predict_rooms_labels(y_pred_proba, rooms_labels))
+    y_pred = model.predict(X)[0]
+    output_per_file = dict((k, int(v)) for k, v in output_per_file.items())
+    output_per_file['task2_class'] = rooms_labels[y_pred]
 
-    logger.debug("Done with Task 1 for file {0}".format(file_path))
-    return rooms_labels[y_pred]
+    logger.debug("Done with Task 2 for file {0}".format(file_path))
+    return output_per_file
 
 
 def task_3(file_path: str, model: ModelBase) -> Tuple[str, str]:
@@ -86,8 +89,8 @@ def main():
             if f.endswith(".jpg"):
                 file_path = os.path.join(dirpath, f)
                 output_per_file = task_1(file_path, models['task_1'])
-                output_per_file['task2_class'] = task_2(output_per_file, models['task_2']),
-                output_per_file['tech_cond'] = task_3(file_path, models['task_3'])[0],
+                output_per_file = task_2(output_per_file, file_path, models['task_2'])
+                output_per_file['tech_cond'] = task_3(file_path, models['task_3'])[0]
                 output_per_file['standard'] = task_3(file_path, models['task_3'])[1]
                 output_per_file['filename'] = f
                 output.append(output_per_file)
