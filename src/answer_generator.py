@@ -20,7 +20,7 @@ logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 input_dir = "Images"
-models_dir = "Models"
+models_dir = "D:\\Programowanie\\zmitac.inc\\Models"
 answers_file = "answers.csv"
 annotations_file = "labels.csv"
 
