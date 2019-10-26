@@ -96,7 +96,7 @@ def main():
 
     with open(answers_file, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile,
-                                fieldnames=['filename', 'standard', 'task2_class', 'tech_cond'] + labels_task_1)
+                                fieldnames=['filename', 'standard', 'task2_class', 'tech_cond'] + labels_all_in_order)
         writer.writeheader()
         for entry in output:
             logger.debug(entry)
