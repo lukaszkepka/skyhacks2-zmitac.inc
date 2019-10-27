@@ -1,0 +1,7 @@
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\bin\Debug\HtmlToPdf.exe.config
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\bin\Debug\HtmlToPdf.exe
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\bin\Debug\HtmlToPdf.pdb
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\obj\Debug\HtmlToPdf.csprojAssemblyReference.cache
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\obj\Debug\HtmlToPdf.csproj.CoreCompileInputs.cache
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\obj\Debug\HtmlToPdf.exe
+C:\Users\matpa\source\repos\HtmlToPdf\HtmlToPdf\obj\Debug\HtmlToPdf.pdb
