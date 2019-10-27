@@ -11,8 +11,10 @@ p    {color: #990000;}
   box-sizing: border-box;
 }
 
-.row {
-  display: flex;
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 /* Create two equal columns that sits next to each other */
