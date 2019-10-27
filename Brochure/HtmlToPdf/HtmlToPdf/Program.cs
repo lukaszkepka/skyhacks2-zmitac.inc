@@ -78,7 +78,7 @@ namespace HtmlToPdf
 
                 text = text.Replace("1\\img"+i , number+"\\"+aa["image"].ToString());
                 text = text.Replace("desc" + i, aa["text"].ToString());
-                File.WriteAllText("template+" + number + ".html", text);
+                File.WriteAllText("template" + number + ".html", text);
                 i++;
             }
 
@@ -86,7 +86,7 @@ namespace HtmlToPdf
 
             PdfConvert.ConvertHtmlToPdf(new Codaxy.WkHtmlToPdf.PdfDocument
             {
-                Url = "template+"+number+".html",
+                Url = "template"+number+".html",
                 HeaderLeft = "[title]",
                 HeaderRight = "[date] [time]",
                 FooterCenter = "Page [page] of [topage]"
