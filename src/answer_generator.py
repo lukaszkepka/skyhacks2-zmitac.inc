@@ -19,6 +19,7 @@ FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 input_dir = "../Images"
 models_dir = "../Models"
 answers_file = "../answers.csv"
