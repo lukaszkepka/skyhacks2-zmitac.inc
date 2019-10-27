@@ -1,5 +1,6 @@
 import os
-
+import re
+from random import random, randint
 from textgenrnn import textgenrnn
 from glob import glob
 import json
@@ -9,14 +10,18 @@ models_folder = 'D:\\Programowanie\\zmitac.inc\\Models'
 
 
 def load_model():
-    return textgenrnn(weights_path=os.path.join(models_folder, 'colaboratory_weights1.hdf5'),
-                      vocab_path=os.path.join(models_folder, 'colaboratory_vocab1.json'),
-                      config_path=os.path.join(models_folder, 'colaboratory_config1.json'))
+    # return textgenrnn()
+    return textgenrnn(weights_path=os.path.join(models_folder, 'colaboratory_weights4.hdf5'),
+                      vocab_path=os.path.join(models_folder, 'colaboratory_vocab4.json'),
+                      config_path=os.path.join(models_folder, 'colaboratory_config4.json'))
 
 
 def post_process_generated_text(text):
     return text.replace('\n', '')
 
+def generate_pdf():
+    import sys, string, os
+    os.system("D:\\Programowanie\\zmitac.inc\\Brochure\\HtmlToPdf\\HtmlToPdf\\bin\\Debug\\HtmlToPdf.exe")
 
 def generate_text_for_image(file_name, description, category, text_generator, n=5):
     text = ""
@@ -26,9 +31,10 @@ def generate_text_for_image(file_name, description, category, text_generator, n=
         keyword = list(i.values())[0]
         score = list(i.values())[1]
 
-        generated_text = text_generator.generate(n=1, prefix=keyword, temperature=0.2, return_as_list=True,
+        generated_text = text_generator.generate(n=5, prefix=keyword, temperature=[1.0, 0.5, 0.2, 0.2], return_as_list=True,
                                                  max_gen_length=100)
-        generated_text = post_process_generated_text(generated_text[0])
+        generated_text = post_process_generated_text(generated_text[randint(0, 4)])
+        generated_text = re.sub("\s\s+", " ", generated_text)
         text = text + generated_text + ". "
         j += 1
 
@@ -59,8 +65,10 @@ def run():
                 text = generate_text_for_image(file_name, json_desc, category, text_generator)
                 pdf_generation_json[os.path.basename(test_dir)].append({'text': text, 'image': file_name})
 
-    with open('data.json', 'w') as outfile:
+    with open('D:\\Programowanie\\zmitac.inc\\Brochure\\HtmlToPdf\\HtmlToPdf\\bin\\Debug\\data.json', 'w') as outfile:
         json.dump(pdf_generation_json, outfile)
+
+    generate_pdf()
 
 
 run()
