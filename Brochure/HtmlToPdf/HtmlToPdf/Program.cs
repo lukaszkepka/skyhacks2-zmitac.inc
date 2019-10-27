@@ -14,7 +14,7 @@ namespace HtmlToPdf
 
             PdfConvert.ConvertHtmlToPdf(new PdfDocument
             {
-                Url = "C:\\Users\\matpa\\source\\repos\\HtmlToPdf\\HtmlToPdf\\template.html",
+                Url = "template.html",
                 HeaderLeft = "[title]",
                 HeaderRight = "[date] [time]",
                 FooterCenter = "Page [page] of [topage]"
