@@ -1,6 +1,7 @@
 import os
 import cv2
 import pandas as pd
+import tensorflow as tf
 
 
 def list_all_files(path):
@@ -11,8 +12,8 @@ def list_all_files(path):
 
     return files
 
-dataset_path = "D:\\Datasets\\skyhacks\\main_task_data"
-annotations_path = "D:\\Programowanie\\zmitac.inc\\Models\\labels.csv"
+dataset_path = "D:\\Datasets\\test_dataset"
+annotations_path = "D:\\answers(7).csv"
 annotations = pd.read_csv(annotations_path)
 annotations = annotations.drop(['tech_cond', 'standard', 'task2_class'], axis=1)
 for file_path in list_all_files(dataset_path):
