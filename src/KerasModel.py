@@ -14,4 +14,4 @@ class KerasModel(ModelBase):
 
     def predict(self, X):
         """ X is image """
-        return np.round(self.model.predict(X))
+        return self.model.predict(X)

@@ -1,0 +1,21 @@
+Mobilenet_tech_new -> with 86 new pictures, with balanced class weights: loss: 0.2800 - acc: 0.8822 - val_loss: 0.3737 - val_acc: 0.8406
+Mobilenet_std_new -> with 86 new pictures, with balanced class weights, class 3 sampled only 200: loss: 0.2425 - acc: 0.9663 - val_loss: 0.8562 - val_acc: 0.8281
+trained_knn_selection -> selected features  0,83 almost
+		['Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Cabinetry',
+         'Ceiling', 'Chair', 'Chandelier', 'Chest of drawers', 'Coffee table',
+         'Couch', 'Countertop', 'Cupboard', 'Curtain', 'Door', 'Drawer',
+         'Facade', 'Floor', 'Furniture', 'Grass', 'Hardwood',
+         'Kitchen & dining room table', 'Kitchen stove', 'Mattress',
+         'Nightstand', 'Plumbing fixture', 'Property', 'Real estate',
+         'Refrigerator', 'Roof', 'Room', 'Rural area', 'Shower', 'Sink', 'Sky',
+         'Table', 'Tablecloth', 'Tap', 'Tile', 'Toilet', 'Tree', 'Urban area',
+         'Wall']
+trained_rf_selection -> selected features 0.86
+		['Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
+         'Bed sheet', 'Cabinetry', 'Ceiling', 'Chair', 'Chandelier',
+         'Chest of drawers', 'Coffee table', 'Couch', 'Countertop', 'Cupboard',
+         'Curtain', 'Door', 'Drawer', 'Facade', 'Fireplace', 'Floor',
+         'Furniture', 'Grass', 'Hardwood', 'Kitchen stove', 'Mattress',
+         'Nightstand', 'Plumbing fixture', 'Property', 'Real estate',
+         'Refrigerator', 'Roof', 'Room', 'Shower', 'Sink', 'Sky', 'Table', 'Tap',
+         'Tile', 'Toilet', 'Tree', 'Urban area', 'Wall', 'Window']

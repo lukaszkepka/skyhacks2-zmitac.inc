@@ -38,6 +38,24 @@ labels_all_in_order = ['Bathroom', 'Bathroom cabinet', 'Bathroom sink', 'Bathtub
 rooms_labels = ['Bathroom', 'Bedroom', 'Dining room', 'House', 'Kitchen', 'Living room']
 rooms_labels_task_2 = ['bathroom', 'bedroom', 'dinning_room', 'house', 'kitchen', 'living_room']
 
+features_selected_knn = ['Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Cabinetry',
+                         'Ceiling', 'Chair', 'Chandelier', 'Chest of drawers', 'Coffee table',
+                         'Couch', 'Countertop', 'Cupboard', 'Curtain', 'Door', 'Drawer',
+                         'Facade', 'Floor', 'Furniture', 'Grass', 'Hardwood',
+                         'Kitchen & dining room table', 'Kitchen stove', 'Mattress',
+                         'Nightstand', 'Plumbing fixture', 'Property', 'Real estate',
+                         'Refrigerator', 'Roof', 'Room', 'Rural area', 'Shower', 'Sink', 'Sky',
+                         'Table', 'Tablecloth', 'Tap', 'Tile', 'Toilet', 'Tree', 'Urban area',
+                         'Wall']
+
+features_selected_rf = ['Bathroom cabinet', 'Bathroom sink', 'Bathtub', 'Bed', 'Bed frame',
+                        'Bed sheet', 'Cabinetry', 'Ceiling', 'Chair', 'Chandelier',
+                        'Chest of drawers', 'Coffee table', 'Couch', 'Countertop', 'Cupboard',
+                        'Curtain', 'Door', 'Drawer', 'Facade', 'Fireplace', 'Floor',
+                        'Furniture', 'Grass', 'Hardwood', 'Kitchen stove', 'Mattress',
+                        'Nightstand', 'Plumbing fixture', 'Property', 'Real estate',
+                        'Refrigerator', 'Roof', 'Room', 'Shower', 'Sink', 'Sky', 'Table', 'Tap',
+                        'Tile', 'Toilet', 'Tree', 'Urban area', 'Wall', 'Window']
 
 filtered_labels = [label for label in labels_all_in_order if label not in rooms_labels]
 
@@ -46,15 +64,17 @@ labels_task3_2 = [1, 2, 3, 4]
 
 output = []
 
-models = {'task_1': KerasModel(os.path.join(models_dir, 'DenseNet121_2.h5')),
-          'task_2': SklearnModel(os.path.join(models_dir, 'trained_knn.sav')),
-          'task_3': NaiveModel(os.path.join(models_dir, annotations_file))}
+selection = True
+models = {'task_1': KerasModel(os.path.join(models_dir, 'Xception.h5')),
+          'task_2': SklearnModel(os.path.join(models_dir, 'trained_rf_selection.sav')),
+          'task_3_tech': KerasModel(os.path.join(models_dir, 'MobileNet_tech_new.h5')),
+          'task_3_std': KerasModel(os.path.join(models_dir, 'MobileNet_std_new.h5'))}
 
 
 def task_1(file_path: str, model: ModelBase) -> dict:
     logger.debug("Performing task 1 for file {0}".format(file_path))
 
-    labels_values_pred = model.predict(utils.load_input_img(file_path, img_shape))[0]
+    labels_values_pred = np.round(model.predict(utils.load_input_img(file_path, img_shape))[0])
 
     logger.debug("Done with Task 1 for file {0}".format(file_path))
     return utils.merge_labels_and_vals_to_dict(filtered_labels, labels_values_pred)
@@ -62,7 +82,11 @@ def task_1(file_path: str, model: ModelBase) -> dict:
 
 def task_2(output_per_file: dict, file_path: str, model: ModelBase):
     logger.debug("Performing task 2 for file {0}".format(file_path))
-    X = [output_per_file[label] for label in filtered_labels]
+
+    labels_used = filtered_labels
+    if selection:
+        labels_used = [label for label in labels_used if label in features_selected_rf]
+    X = [output_per_file[label] for label in labels_used]
     X = np.expand_dims(X, axis=0)
     y_pred_proba = model.predict_proba(X)[0]
     output_per_file.update(utils.predict_rooms_labels(y_pred_proba, rooms_labels))
@@ -74,9 +98,11 @@ def task_2(output_per_file: dict, file_path: str, model: ModelBase):
     return output_per_file
 
 
-def task_3(file_path: str, model: ModelBase) -> Tuple[str, str]:
+def task_3(file_path: str, model: ModelBase):
     logger.debug("Performing task 3 for file {0}".format(file_path))
-    result = model.predict()
+    y_pred = model.predict(utils.load_input_img(file_path, img_shape))[0]
+    print(y_pred)
+    result = np.argmax(y_pred) + 1
     logger.debug("Done with Task 1 for file {0}".format(file_path))
     return result
 
@@ -89,8 +115,8 @@ def main():
                 file_path = os.path.join(dirpath, f)
                 output_per_file = task_1(file_path, models['task_1'])
                 output_per_file = task_2(output_per_file, file_path, models['task_2'])
-                output_per_file['tech_cond'] = task_3(file_path, models['task_3'])[0]
-                output_per_file['standard'] = task_3(file_path, models['task_3'])[1]
+                output_per_file['tech_cond'] = task_3(file_path, models['task_3_tech'])
+                output_per_file['standard'] = task_3(file_path, models['task_3_std'])
                 output_per_file['filename'] = f
                 output.append(output_per_file)
 
